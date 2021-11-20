@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import Login from "./Login/Login";
 import MainPage from "./MainPage/MainPage";
+import Workspace from "./Workspace/Workspace";
 
 
 
@@ -30,7 +31,7 @@ function App() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     let navigate = useNavigate();
   return (
-      <Flex className={"all"} grow={"1"} direction={"column"} bg = {useColorModeValue("#F8F9FA", "#232424")}>
+      <Flex className={"all"} direction={"column"} bg = {useColorModeValue("#F8F9FA", "#232424")}>
           <Box bg='#243DE2' px={4}>
               <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
                   <LinkBox className = "logo" >  <LinkOverlay href="/">SQL Hero</LinkOverlay> </LinkBox>
@@ -82,7 +83,9 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Login />}>
                     </Route>
-                    <Route path="/home" element={<MainPage />}>
+                    <Route path="/home2" element={<MainPage />}>
+                    </Route>
+                    <Route path="/home" element={<Workspace/>}>
                     </Route>
                 </Routes>
           </Flex>
