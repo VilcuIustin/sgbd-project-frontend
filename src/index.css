@@ -1,7 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+
 body {
   margin: 0;
-
+  --colorPrimary: #2355D4;
+  --colorPrimaryHover: #0A36A8;
+  --colorSecundaryLight: white;
+  --colorSecundaryDark: #353537;
+  --colorSecundaryDarkHover: #2d2d31;
+  --colorSecundaryLightHover: #F6F7FC;
+  font-family: 'Open Sans';
 }
+
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

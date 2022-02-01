@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import {ChakraProvider} from "@chakra-ui/react";
 import {BrowserRouter} from "react-router-dom";
 import theme from "./Theme";
+import "../src/Security/interceptors";
 
 ReactDOM.render(
   <React.StrictMode>

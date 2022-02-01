@@ -18,75 +18,55 @@ import {
     useColorModeValue,
     Stack,
     useColorMode,
-    Center, Switch, LinkBox, Modal, ModalOverlay, ModalBody, ModalHeader, ModalContent, ModalFooter, ModalCloseButton,
+    Center,
+    Switch,
+    LinkBox,
+    Modal,
+    ModalOverlay,
+    ModalBody,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    ModalCloseButton,
+    IconButton,
 } from "@chakra-ui/react";
 import Login from "./Login/Login";
 import MainPage from "./MainPage/MainPage";
 import Workspace from "./Workspace/Workspace";
+import {HamburgerIcon} from "@chakra-ui/icons";
+import {NavBar} from "./Components/NavBar";
+import {CanAccess} from "./Security/CanAccess";
+import {Home} from "./Home/Home";
+import {Register} from "./Register/Register";
+import {PageNotFound} from "./PageNotFound";
+import {Courses} from "./Courses/Courses";
+import {SelectSection} from "./SelectSection/SelectSection";
+import {CreateTable} from "./CreateTable/CreateTable";
 
 
 
 function App() {
-    const {toggleColorMode } = useColorMode();
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    let navigate = useNavigate();
+
   return (
       <Flex className={"all"} direction={"column"} bg = {useColorModeValue("#F8F9FA", "#232424")}>
-          <Box bg='#243DE2' px={4}>
-              <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-                  <LinkBox className = "logo" >  <LinkOverlay href="/">SQL Hero</LinkOverlay> </LinkBox>
-
-                  <Flex alignItems={'center'}>
-                      <Menu >
-                          <MenuButton  display={{ md: 'none' }}>
-                              Apasa
-                          </MenuButton >
-                          <MenuList>
-                              <MenuItem>
-                                  Change Mode
-                              </MenuItem>
-                              <MenuItem>
-                                  Upload script
-                              </MenuItem>
-                          </MenuList>
-                      </Menu>
-                      <Stack direction={'row'} spacing={7} display = {{ base : 'none', sm: 'none', md:"inline"}}>
-
-                          <Button onClick={toggleColorMode}>
-                              Change Mode
-                          </Button>
-                          <Button onClick={onOpen}>
-                              Upload script
-                          </Button>
-                          <Modal isOpen={isOpen} onClose={onClose}>
-                              <ModalOverlay />
-                              <ModalContent>
-                                  <ModalHeader>Modal Title</ModalHeader>
-                                  <ModalCloseButton />
-                                  <ModalBody>
-
-                                  </ModalBody>
-
-                                  <ModalFooter>
-                                      <Button colorScheme="blue" mr={3} onClick={onClose}>
-                                          Close
-                                      </Button>
-                                      <Button variant="ghost">Secondary Action</Button>
-                                  </ModalFooter>
-                              </ModalContent>
-                          </Modal>
-                      </Stack>
-                  </Flex>
-              </Flex>
-          </Box>
+          <NavBar/>
           <Flex flex ="2" grow = "2">
                 <Routes>
-                    <Route path="/" element={<Login />}>
+                    <Route path="/" element={CanAccess() ? <SelectSection/> :<Home />}>
                     </Route>
-                    <Route path="/home2" element={<MainPage />}>
+                    <Route path="/courses" element={CanAccess() ? <Courses/> :<Home />}>
                     </Route>
-                    <Route path="/home" element={<Workspace/>}>
+                    <Route path="/commands" element={<MainPage />}>
                     </Route>
+                    <Route path="/workspaces" element={CanAccess() ? <Workspace/> : <Login/>}>
+                    </Route>
+                    <Route path="/create/table" element={CanAccess() ? <CreateTable/> : <Home/>}>
+                    </Route>
+                    <Route path="/login" element={!CanAccess() ? <Login/> : <Workspace/>}>
+                    </Route>
+                    <Route path="/register" element={!CanAccess() ? <Register/> : <Workspace/>}>
+                    </Route>
+                    <Route path={"*"} element={<PageNotFound/>}></Route>
                 </Routes>
           </Flex>
       </Flex>
