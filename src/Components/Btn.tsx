@@ -3,7 +3,7 @@ import {Button, useColorModeValue} from "@chakra-ui/react";
 
 export function Btn(props:any){
     const primaryBg = "var(--colorPrimary)";
-    const secundaryBg = useColorModeValue("var(--colorSecundaryLight)", "var(--colorSecundaryDark)");
+    const secundaryBg = useColorModeValue("var(--colorSecundaryLight)", "var(--bgDark)");
     const hoverBgPrimery = "var(--colorPrimaryHover)";
     const secundaryBgHover = useColorModeValue("var(--colorSecundaryLightHover)", "var(--colorSecundaryDarkHover)");
     const color = useColorModeValue(props.primary == "true"? "white" : primaryBg, props.primary == "true"? "white" : primaryBg)

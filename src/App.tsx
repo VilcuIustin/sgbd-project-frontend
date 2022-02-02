@@ -31,7 +31,7 @@ import {
     IconButton,
 } from "@chakra-ui/react";
 import Login from "./Login/Login";
-import MainPage from "./MainPage/MainPage";
+import QueryExecution from "./QueryExecution/QueryExecution";
 import Workspace from "./Workspace/Workspace";
 import {HamburgerIcon} from "@chakra-ui/icons";
 import {NavBar} from "./Components/NavBar";
@@ -56,7 +56,7 @@ function App() {
                     </Route>
                     <Route path="/courses" element={CanAccess() ? <Courses/> :<Home />}>
                     </Route>
-                    <Route path="/commands" element={<MainPage />}>
+                    <Route path="/commands" element={<QueryExecution />}>
                     </Route>
                     <Route path="/workspaces" element={CanAccess() ? <Workspace/> : <Login/>}>
                     </Route>

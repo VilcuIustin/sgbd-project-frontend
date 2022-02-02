@@ -9,7 +9,7 @@ import {
     SimpleGrid, ScaleFade,
     Text,
     Spinner,
-    useDisclosure, toast, useToast, Box, Heading, Divider, Badge
+    useDisclosure, toast, useToast, Box, Heading, Divider, Badge, useColorModeValue
 } from "@chakra-ui/react";
 import WorkspaceCard from "./WorkspaceCard";
 import axios from "axios";
@@ -24,22 +24,27 @@ function Workspace(){
     const [workspaces, addWorkspace] = useState(new Array<WorkspaceModel>());
     const [queries, addQueries] = useState(new Array<WorkspaceModel>());
     const [newWorkspace, newWorkspaceName] = useState("");
+    const bgModal = useColorModeValue("var(--bgWhite)", "var(--bgDark)");
+
     useEffect(() => {
         reloadWorkspaces(true);
-
     }, [addWorkspace])
 
     const crateWorkspace = () =>{
         isLoading(true);
-        console.log(newWorkspace);
-        axios.get(process.env.REACT_APP_ADDRESS +"/api/Workstation")
+        if(newWorkspace.trim() == ""){
+            addToast("Database name is required", "error");
+            isLoading(false);
+        }
+        axios.post(process.env.REACT_APP_ADDRESS +"/api/Workstation", {Name: newWorkspace.trim()})
             .then(async (res) => {
                 addToast("Workspace Created", "success")
                 reloadWorkspaces(false)
                 isLoading(false);
             })
             .catch((err) =>{
-                addToast(err.toString(), "error");
+
+                addToast(err.response.data.message, "error");
                 isLoading(false);
             })
 
@@ -90,7 +95,7 @@ function Workspace(){
 
     function addToast(message:string, status : any) {
         // @ts-ignore
-        toastIdRef.current = toast({ description: message, status: status,  variant: "top-accent", isClosable: true, position: "bottom-left"})
+        toastIdRef.current = toast({ color:"black", description: message, status: status, isClosable: true, position: "bottom-left"})
     }
 
     return(
@@ -106,17 +111,17 @@ function Workspace(){
                         </Btn>
                         <Modal isOpen={isOpen} onClose={onClose}>
                             <ModalOverlay />
-                            <ModalContent>
+                            <ModalContent bg={bgModal}>
                                 <ModalHeader>Create a new Workspacee</ModalHeader>
                                 <ModalCloseButton />
                                 <ModalBody>
                                     <Input placeholder="Workspace name" onChange={e => newWorkspaceName(e.target.value)} ></Input>
                                 </ModalBody>
                                 <ModalFooter>
-                                    <Button  variant="ghost"  mr={3} onClick={onClose}>
+                                    <Btn  mr={3} onClick={onClose}>
                                         Cancel
-                                    </Button>
-                                    <Button colorScheme="blue" onClick={crateWorkspace}>Create</Button>
+                                    </Btn>
+                                    <Btn primary={"true"} onClick={crateWorkspace}>Create</Btn>
                                 </ModalFooter>
                             </ModalContent>
                         </Modal>

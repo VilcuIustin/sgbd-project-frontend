@@ -8,6 +8,8 @@ body {
   --colorSecundaryDark: #353537;
   --colorSecundaryDarkHover: #2d2d31;
   --colorSecundaryLightHover: #F6F7FC;
+  --bgDark: #232424;
+  --bgWhite: #F6F7FC;
   font-family: 'Open Sans';
 }
 

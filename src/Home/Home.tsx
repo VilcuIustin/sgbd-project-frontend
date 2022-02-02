@@ -28,7 +28,7 @@ export function Home(props:any){
                 <Button mt={"2"} bg={"#2355D4"} px={12} onClick={() => nav("/register")}
                         _focus={{border:"none"}}
                         color={useColorModeValue("white","white")}>Sign Up</Button>
-                <Text color={"#79797B"} mt={5} onClick={() => nav("/login")}>
+                <Text cursor={"pointer"} color={"#79797B"} mt={5} onClick={() => nav("/login")}>
                     If you have already an account you can press here.
                 </Text>
             </Flex>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -26,6 +26,7 @@ import {useLocation} from "react-router-dom";
 import "./styleDropdown.css";
 import "../index.css";
 import {Btn} from "../Components/Btn";
+import axios from "axios";
 
 
 export function CreateTable(){
@@ -37,7 +38,8 @@ export function CreateTable(){
     const toast = useToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = React.useRef(null);
-    const [pkExists, setPkExists] = useState(false);
+    let pkExists = false;
+    const tableNameRef = useRef(null);
 
     function newEntry() {
         let rows = details;
@@ -80,35 +82,66 @@ export function CreateTable(){
         setDetails([...rows]);
     }
 
-    function createTable(){
+    async function createTable() {
         setLoading(true);
         let columnNameHash = new Set<string>();
 
         for (const row of details) {
-            if(row.columnName.trim() == ""){
+            if (row.columnName.trim() == "") {
                 setLoading(false);
                 return newToast("Error", "There is a row with empty column name", "error");
             }
-            if(row.datatype.trim() == ""){
+            if (row.datatype.trim() == "") {
                 setLoading(false);
                 return newToast("Error", "There is a row with empty data type", "error");
             }
-            if(row.isPrimary == true){
-                setPkExists(true);
+            if (row.isPrimary) {
+                console.log("a ajuns aici")
+                pkExists = true;
             }
             columnNameHash.add(row.columnName);
         }
-        if(columnNameHash.size != details.length){
+        if (columnNameHash.size != details.length) {
             setLoading(false);
             return newToast("Error", "There is a duplicate column name", "error");
         }
 
-        if(pkExists == false){
+        // @ts-ignore
+        if (tableNameRef.current!.value.trim() === "") {
+            setLoading(false);
+            return newToast("Error", "Table name is required", "error");
+        }
+        console.error(pkExists);
+        if (!pkExists) {
             onOpen();
             return;
         }
 
+        let columns = Array<any>();
 
+        for (const row of details) {
+            columns.push({
+                ColumnName: row.columnName,
+                ColumnType: row.datatype,
+                IsPrimary: row.isPrimary,
+                IsNullable: row.isNullable
+            });
+        }
+        console.log(columns);
+        // @ts-ignore
+        let tableName = tableNameRef.current!.value.trim()
+
+        axios.post(process.env.REACT_APP_ADDRESS + "/api/queries/table", {
+            Name: tableName,
+            Id: state.id,
+            Columns: columns,
+        }).then((res) => {
+            console.log(res);
+            setLoading(false);
+        }).catch((err) => {
+            console.log(err.response);
+            setLoading(false);
+        })
 
     }
 
@@ -140,7 +173,7 @@ export function CreateTable(){
     return (
         <Flex h={"100%"} flexDirection={"column"} w={"100%"} color={useColorModeValue( "black","white")}>
             <Flex flexDirection={"row"} alignSelf={"end"} mb={4}>
-                <Input placeholder={"table name"} w={"200px"} borderColor={"var(--colorPrimary)"} me={3} disabled={loading}/>
+                <Input placeholder={"table name"} w={"200px"} ref={tableNameRef} borderColor={"var(--colorPrimary)"} me={3} disabled={loading}/>
                 <Btn primary={"true"} me={4} onClick={() => {createTable()}} disabled={loading}>Create Tabel</Btn>
             </Flex>
             <Flex >
@@ -214,7 +247,7 @@ export function CreateTable(){
                         <Button ref={cancelRef} colorScheme='red' onClick={() => {setLoading(false); onClose()}}>
                             No
                         </Button>
-                        <Button  ml={3}  onClick={() => {setPkExists(true);createTable(); onClose();  }}>
+                        <Button  ml={3}  onClick={() => {pkExists = true;createTable(); onClose();  }}>
                             Yes
                         </Button>
                     </AlertDialogFooter>

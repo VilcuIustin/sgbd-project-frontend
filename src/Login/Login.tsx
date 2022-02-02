@@ -66,9 +66,9 @@ function Login(props: any){
     }
 
     return(
-        <Flex className = "main" flex ="1" grow = "1" align={'center'}
+        <Flex className = "main" flex ="1" grow = "1" align={'center'} color={useColorModeValue("black", "white")}
               justify={'center'}  h={"100%"}>
-            <Flex className={"login-card"}  borderWidth={2}
+            <Flex className={"login-card"}  borderWidth={2} borderColor={"var(--colorPrimary)"} rounded={'2xl'}
                 bg={useColorModeValue('#fff', '#232424')}>
                 <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                     <Stack align={'center'}>
@@ -76,7 +76,7 @@ function Login(props: any){
 
                     </Stack>
                     <Box
-                        rounded={'lg'}
+
                         bg={useColorModeValue('white', '#232424')}
 
                         p={8}>

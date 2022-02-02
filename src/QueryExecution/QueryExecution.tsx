@@ -36,12 +36,12 @@ import {
     FormHelperText, toast, useToast
 } from "@chakra-ui/react";
 import {HamburgerIcon} from "@chakra-ui/icons";
-import "./MainPage.css";
+import "./QueryExecution.css";
 import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 import {Btn} from "../Components/Btn";
 
-function MainPage(props: any){
+function QueryExecution(props: any){
     const {state} = useLocation();
     const [results, setReults] = useState([]);
     const [query, setQuery] = React.useState("");
@@ -62,8 +62,13 @@ function MainPage(props: any){
         axios.post("https://localhost:7001/api/Workstation/run",
             {Sql: inputRef.current.value, WorkspaceId: state.id, RowNumbers: 10})
             .then(res => {
-                console.log(res.data);
-                setReults(res.data ? res.data : [[{"": "No data found"}]]);
+                console.log((res.data as Array<Array<any>>).length);
+                for(let i=0; i<res.data.length; i++){
+                    if(res.data[i].length == 0){
+                        res.data[i] = [{"": "No data found"}];
+                    }
+                }
+                setReults(res.data.length != 0 ? res.data : [[{"": "No data found"}]]);
                 console.log(results)
                 isRun(false);
             })
@@ -100,14 +105,41 @@ function MainPage(props: any){
 
     }
 
-    const repair = () => {
+    const repair = (mode:number) => {
+        let url:string;
+       if(mode === 1){
+           url = "/api/Queries/repair/1";
+       }
+       else if(mode === 2){
+           url = "/api/Queries/repair/2";
+       }
+        else{
+            url = "/api/Queries/repair/3";
+        }
 
+        axios.post(process.env.REACT_APP_ADDRESS + url,
+            {Id: state.id})
+            .then(res => {
+                console.log(res.data);
+                console.log(res.data.length !=0)
+                if(res.data[0].length !=0){
+                    setReults(res.data);
+                }
+                else{
+                    let data = [[{"Message": "No changes"}]]
+                    // @ts-ignore
+                    setReults(data)
+                }
+
+        }).catch(err => {
+            console.log(err.response)
+        })
     }
 
     return(
         <Flex width={"100%"} direction ={"column"} >
             <Flex  direction={"column"} h={"20vh"}>
-                <Flex  size={"sm"} mt={3} alignItems={"center"} w={"100%"}>
+                <Flex  size={"sm"} mt={3} mb={3} alignItems={"center"} w={"100%"}>
                     <Menu>
                     <MenuButton  mx={4}
                                  display={{ md: 'none' }}
@@ -136,6 +168,21 @@ function MainPage(props: any){
                         </Select>
                         <Btn primary={"true"} onClick={() => navigate("/create/table", { state: { id: state.id } })}>
                             Create table (simplified)</Btn>
+                        <Btn  mr={3} display = {{ base : 'none', sm: 'none', md:"inline"}} onClick ={ (e:any) => {
+                            repair(1)
+                        }}>
+                            Repair tables without pk
+                        </Btn>
+                        <Btn  mr={3} display = {{ base : 'none', sm: 'none', md:"inline"}} onClick ={ (e:any) => {
+                            repair(2)
+                        }}>
+                            Repair tables with pk
+                        </Btn>
+                        <Btn  mr={3} display = {{ base : 'none', sm: 'none', md:"inline"}} onClick ={ (e:any) => {
+                            repair(3)
+                        }}>
+                            Repair all
+                        </Btn>
                     </Stack>
 
 
@@ -148,15 +195,12 @@ function MainPage(props: any){
                         }}>
                             Save
                         </Btn>
-                        <Btn  mr={3} display = {{ base : 'none', sm: 'none', md:"inline"}} onClick ={ (e:any) => {
-                            repair()
-                        }}>
-                            Primary key constraints
-                        </Btn>
+
+
                     </Stack>
                 </Flex>
                 <Box px={4} pt={2}  h={"100%"} color={useColorModeValue("black","white")} >
-                    <Textarea type={"textarea"}  ref={inputRef} />
+                    <Textarea type={"textarea"}  ref={inputRef} resize={"none"} borderColor={"#243DE2"}/>
                 </Box>
             </Flex>
             <Flex  borderColor={"#243DE2"} h={"70vh"} borderWidth={2} mt={3} mx={3} mb={3} justifyContent={"center"} >
@@ -167,10 +211,10 @@ function MainPage(props: any){
                 </Flex>
                 }
                 {!runLoading &&
-                <Stack w={"100%"}  overflow={"auto"}>
+                <Stack w={"100%"}  >
 
                 {results.map(queryRes => {
-                    return <Stack overflow={"auto"}>
+                    return <Stack h={"50%"} overflow={"auto"} >
                         <Table >
                             <Thead>
                                 <Tr>
@@ -229,4 +273,4 @@ function MainPage(props: any){
 }
 
 
-export default MainPage;
+export default QueryExecution;
